@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Jérémy — Développeur Web Freelance</title>
+  <meta name="description" content="Développeur web freelance — Sites sur-mesure, scripts Python, applications web. Code propre, livraison rapide."/>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --ink: #080808;
+      --bg: #F2F0EB;
+      --white: #FAFAF8;
+      --accent: #C8F135;
+      --muted: #888680;
+      --border: rgba(8,8,8,0.1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ink); font-family: 'Instrument Sans', sans-serif; font-size: 16px; line-height: 1.6; overflow-x: hidden; cursor: none; }
+
+    #cur { width: 10px; height: 10px; background: var(--accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); mix-blend-mode: multiply; }
+    #ring { width: 38px; height: 38px; border: 1.5px solid var(--ink); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: width 0.2s, height 0.2s, border-color 0.2s; }
+    #ring.big { width: 56px; height: 56px; border-color: var(--accent); }
+
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 1.3rem 5vw; }
+    .nav-bg { position: absolute; inset: 0; background: rgba(242,240,235,0.88); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: 'Fraunces', serif; font-weight: 900; font-size: 1.4rem; letter-spacing: -0.04em; text-decoration: none; color: var(--ink); position: relative; z-index: 1; }
+    .nav-links { display: flex; gap: 2rem; position: relative; z-index: 1; }
+    .nav-links a { text-decoration: none; color: var(--muted); font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-cta { background: var(--ink) !important; color: var(--bg) !important; padding: 0.5rem 1.2rem; border-radius: 100px; transition: background 0.2s !important; }
+    .nav-cta:hover { background: var(--accent) !important; color: var(--ink) !important; }
+
+    #accueil { min-height: 100vh; display: grid; grid-template-rows: 1fr auto; padding: 10rem 5vw 4rem; position: relative; overflow: hidden; }
+    .hero-wm { position: absolute; bottom: -3rem; left: -1rem; font-family: 'Fraunces', serif; font-size: clamp(10rem, 22vw, 22rem); font-weight: 900; color: transparent; -webkit-text-stroke: 1px rgba(8,8,8,0.055); line-height: 1; user-select: none; pointer-events: none; white-space: nowrap; }
+    .hero-content { position: relative; z-index: 1; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 0.6rem; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; color: var(--muted); margin-bottom: 2rem; }
+    .eyebrow::before { content: ''; width: 28px; height: 1px; background: var(--muted); }
+    h1 { font-family: 'Fraunces', serif; font-size: clamp(3.5rem, 8vw, 8rem); font-weight: 900; line-height: 0.95; letter-spacing: -0.04em; margin-bottom: 2.5rem; max-width: 900px; }
+    .it { font-style: italic; font-weight: 300; color: var(--muted); }
+    .hl { background: var(--accent); padding: 0 0.12em; border-radius: 4px; }
+    .hero-bot { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 2rem; position: relative; z-index: 1; }
+    .hero-desc { max-width: 380px; color: var(--muted); font-size: 0.95rem; line-height: 1.7; }
+    .hero-actions { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 2rem; border-radius: 100px; font-size: 0.88rem; font-weight: 600; text-decoration: none; border: none; cursor: none; transition: all 0.2s; font-family: inherit; }
+    .btn-p { background: var(--ink); color: var(--white); }
+    .btn-p:hover { background: var(--accent); color: var(--ink); transform: translateY(-2px); }
+    .btn-g { background: transparent; color: var(--ink); border: 1.5px solid var(--border); }
+    .btn-g:hover { border-color: var(--ink); transform: translateY(-2px); }
+    .dispo { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--muted); }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,0.2); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100% { box-shadow: 0 0 0 3px rgba(34,197,94,0.2); } 50% { box-shadow: 0 0 0 7px rgba(34,197,94,0.06); } }
+
+    .mq-wrap { background: var(--ink); padding: 1rem 0; overflow: hidden; white-space: nowrap; }
+    .mq-track { display: inline-flex; animation: mq 22s linear infinite; }
+    .mq-track span { font-family: 'Fraunces', serif; font-size: 0.95rem; font-style: italic; color: rgba(242,240,235,0.4); padding: 0 2rem; }
+    .mq-track span.acc { color: var(--accent); font-style: normal; font-weight: 700; }
+    @keyframes mq { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    section { padding: 7rem 5vw; }
+    .lbl { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; color: var(--muted); margin-bottom: 3rem; display: flex; align-items: center; gap: 1rem; }
+    .lbl::after { content: ''; flex: 1; max-width: 50px; height: 1px; background: var(--border); }
+    h2 { font-family: 'Fraunces', serif; font-size: clamp(2.2rem, 4vw, 3.5rem); font-weight: 900; letter-spacing: -0.04em; line-height: 1.05; margin-bottom: 3.5rem; }
+
+    /* ABOUT */
+    #about { background: var(--white); }
+    .about-grid { display: grid; grid-template-columns: 1fr 1.6fr; gap: 6rem; align-items: center; }
+    .about-avatar { width: 100%; aspect-ratio: 1; background: var(--ink); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-family: 'Fraunces', serif; font-size: 6rem; font-weight: 900; color: var(--accent); position: relative; overflow: hidden; max-width: 280px; }
+    .about-avatar::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(-45deg, transparent, transparent 20px, rgba(200,241,53,0.04) 20px, rgba(200,241,53,0.04) 21px); }
+    .about-text p { color: var(--muted); font-size: 0.95rem; line-height: 1.8; margin-bottom: 1rem; }
+    .about-text h2 { margin-bottom: 1.5rem; }
+    .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2.5rem; }
+    .stat { background: var(--bg); border-radius: 12px; padding: 1.2rem; border: 1px solid var(--border); }
+    .stat-n { font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 900; letter-spacing: -0.04em; line-height: 1; }
+    .stat-l { font-size: 0.78rem; color: var(--muted); margin-top: 0.2rem; }
+
+    /* SERVICES */
+    #services { background: var(--ink); }
+    #services .lbl { color: rgba(242,240,235,0.3); }
+    #services .lbl::after { background: rgba(242,240,235,0.1); }
+    #services h2 { color: var(--bg); }
+    .slist { display: flex; flex-direction: column; }
+    .srow { display: flex; justify-content: space-between; align-items: center; padding: 2rem 0; border-bottom: 1px solid rgba(242,240,235,0.08); text-decoration: none; color: var(--bg); gap: 2rem; transition: padding-left 0.3s; cursor: none; }
+    .srow:first-child { border-top: 1px solid rgba(242,240,235,0.08); }
+    .srow:hover { padding-left: 1.5rem; }
+    .srow:hover .sarr { background: var(--accent); color: var(--ink); transform: translate(3px,-3px); }
+    .sleft { display: flex; align-items: center; gap: 2rem; }
+    .snum { font-family: 'Fraunces', serif; font-size: 0.85rem; font-style: italic; color: rgba(242,240,235,0.2); min-width: 28px; }
+    .sname { font-family: 'Fraunces', serif; font-size: clamp(1.3rem, 2.5vw, 2rem); font-weight: 700; letter-spacing: -0.03em; }
+    .sdesc { font-size: 0.8rem; color: rgba(242,240,235,0.35); margin-top: 0.2rem; }
+    .sright { display: flex; align-items: center; gap: 1.5rem; flex-shrink: 0; }
+    .sprice { font-size: 0.82rem; color: rgba(242,240,235,0.35); white-space: nowrap; }
+    .sarr { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(242,240,235,0.15); display: flex; align-items: center; justify-content: center; transition: all 0.25s; flex-shrink: 0; }
+
+    /* TARIFS */
+    #tarifs { background: var(--bg); }
+    .tgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+    .tcard { background: var(--white); border: 1px solid var(--border); border-radius: 20px; padding: 2rem; position: relative; transition: transform 0.2s, box-shadow 0.2s; }
+    .tcard:hover { transform: translateY(-5px); box-shadow: 0 20px 50px rgba(8,8,8,0.07); }
+    .tcard.feat { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+    .tbadge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--accent); color: var(--ink); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.3rem 1rem; border-radius: 100px; white-space: nowrap; }
+    .tsvc { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.4rem; }
+    .tcard.feat .tsvc { color: rgba(242,240,235,0.4); }
+    .tname { font-family: 'Fraunces', serif; font-size: 1.2rem; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 1.2rem; }
+    .tprice { font-family: 'Fraunces', serif; font-size: 2.8rem; font-weight: 900; letter-spacing: -0.04em; line-height: 1; margin-bottom: 0.3rem; }
+    .tprice small { font-size: 0.9rem; font-weight: 400; font-family: 'Instrument Sans', sans-serif; opacity: 0.5; }
+    .tdelay { font-size: 0.78rem; color: var(--muted); margin-bottom: 1.4rem; padding-bottom: 1.4rem; border-bottom: 1px solid var(--border); }
+    .tcard.feat .tdelay { color: rgba(242,240,235,0.4); border-color: rgba(242,240,235,0.1); }
+    .tfeats { list-style: none; display: flex; flex-direction: column; gap: 0.55rem; }
+    .tfeats li { font-size: 0.84rem; display: flex; align-items: flex-start; gap: 0.6rem; }
+    .tfeats li::before { content: '✓'; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+    .tcard.feat .tfeats li { color: rgba(242,240,235,0.8); }
+
+    /* PROJETS */
+    #projets { background: var(--white); }
+    .pgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1.5rem; }
+    .pcard { background: var(--white); border-radius: 16px; overflow: hidden; border: 1px solid var(--border); transition: transform 0.25s, box-shadow 0.25s; }
+    .pcard:hover { transform: translateY(-6px); box-shadow: 0 20px 60px rgba(8,8,8,0.08); }
+    .pthumb { height: 185px; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; position: relative; overflow: hidden; }
+    .pt-o { background: #FFF3E0; } .pt-b { background: #E3F2FD; } .pt-g { background: #E8F5E9; }
+    .pthumb-pat { position: absolute; inset: 0; background: repeating-linear-gradient(-45deg, transparent, transparent 12px, rgba(8,8,8,0.025) 12px, rgba(8,8,8,0.025) 13px); }
+    .pbody { padding: 1.5rem; }
+    .pname { font-family: 'Fraunces', serif; font-size: 1.1rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.4rem; }
+    .pdesc { font-size: 0.84rem; color: var(--muted); line-height: 1.6; margin-bottom: 1rem; }
+    .ptags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .tag { font-size: 0.72rem; font-weight: 600; padding: 0.25rem 0.7rem; border-radius: 100px; background: var(--bg); border: 1px solid var(--border); color: var(--muted); }
+    .wip { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.72rem; font-weight: 600; padding: 0.3rem 0.8rem; background: #FFF8E1; color: #B8860B; border-radius: 100px; margin-top: 0.8rem; border: 1px solid #F0D060; }
+    .priv { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.72rem; font-weight: 600; padding: 0.3rem 0.8rem; background: var(--bg); color: var(--muted); border-radius: 100px; margin-top: 0.8rem; border: 1px solid var(--border); }
+
+    /* STACK */
+    #stack { background: var(--bg); }
+    .sgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 1rem; }
+    .si { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem 1rem; text-align: center; font-size: 0.84rem; font-weight: 600; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+    .si:hover { background: var(--ink); color: var(--bg); border-color: var(--ink); transform: translateY(-3px); }
+    .si span { font-size: 1.5rem; }
+
+    /* CONTACT */
+    #contact { background: var(--ink); }
+    #contact .lbl { color: rgba(242,240,235,0.3); }
+    #contact .lbl::after { background: rgba(242,240,235,0.1); }
+    .chl { font-family: 'Fraunces', serif; font-size: clamp(2.5rem, 6vw, 6rem); font-weight: 900; letter-spacing: -0.04em; line-height: 1; color: var(--bg); margin-bottom: 3rem; }
+    .chl em { font-style: italic; font-weight: 300; color: var(--accent); }
+    .cform { display: flex; flex-direction: column; gap: 1.2rem; max-width: 680px; }
+    .frow { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+    .fg { display: flex; flex-direction: column; gap: 0.5rem; }
+    .fg label { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(242,240,235,0.4); }
+    .fg input, .fg select, .fg textarea { background: rgba(242,240,235,0.05); border: 1px solid rgba(242,240,235,0.12); border-radius: 10px; padding: 0.9rem 1.1rem; color: var(--bg); font-family: inherit; font-size: 0.9rem; outline: none; transition: border-color 0.2s; width: 100%; }
+    .fg input::placeholder, .fg textarea::placeholder { color: rgba(242,240,235,0.2); }
+    .fg select option { background: #1a1a1a; }
+    .fg input:focus, .fg select:focus, .fg textarea:focus { border-color: var(--accent); }
+    .fg textarea { resize: vertical; min-height: 130px; }
+    .fbot { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-top: 0.5rem; }
+    .rt { font-size: 0.82rem; color: rgba(242,240,235,0.35); }
+    .fok { display: none; margin-top: 1rem; padding: 1rem 1.4rem; background: rgba(200,241,53,0.1); border: 1px solid rgba(200,241,53,0.3); border-radius: 10px; color: var(--accent); font-size: 0.88rem; }
+
+    footer { background: var(--ink); padding: 2rem 5vw; border-top: 1px solid rgba(242,240,235,0.06); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    footer span, footer a { font-size: 0.78rem; color: rgba(242,240,235,0.25); text-decoration: none; }
+    footer a:hover { color: var(--accent); }
+
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    @media (max-width: 900px) { .about-grid { grid-template-columns: 1fr; gap: 3rem; } .about-avatar { max-width: 180px; } }
+    @media (max-width: 768px) { nav { padding: 1rem 5vw; } .nav-links a:not(.nav-cta) { display: none; } section { padding: 5rem 5vw; } .sright .sprice { display: none; } .frow { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="ring"></div>
+
+<nav>
+  <div class="nav-bg"></div>
+  <a href="#accueil" class="nav-logo">JD.</a>
+  <div class="nav-links">
+    <a href="#about">À propos</a>
+    <a href="#services">Services</a>
+    <a href="#tarifs">Tarifs</a>
+    <a href="#projets">Projets</a>
+    <a href="#contact" class="nav-cta">Me contacter</a>
+  </div>
+</nav>
+
+<section id="accueil">
+  <div class="hero-wm">DEV</div>
+  <div class="hero-content">
+    <div class="eyebrow">Développeur web freelance · Paris</div>
+    <h1>Sites web<br><span class="it">sur-mesure,</span><br><span class="hl">livrés vite.</span></h1>
+  </div>
+  <div class="hero-bot">
+    <p class="hero-desc">Je code vos sites, scripts et apps en HTML, CSS, JS et Python. Pas de template. Pas de builder. Du vrai code, propre et rapide.</p>
+    <div class="hero-actions">
+      <div class="dispo"><span class="dot"></span>Disponible</div>
+      <a href="#services" class="btn btn-g">Mes services</a>
+      <a href="#contact" class="btn btn-p">Travailler ensemble →</a>
+    </div>
+  </div>
+</section>
+
+<div class="mq-wrap" aria-hidden="true">
+  <div class="mq-track">
+    <span class="acc">· HTML</span><span>CSS</span><span>JavaScript</span><span class="acc">· Python</span><span>PHP</span><span>SQL</span><span class="acc">· Sites vitrine</span><span>Scripts Python</span><span>Apps web</span><span class="acc">· Bugs réglés</span><span>Code sur-mesure</span><span>Livraison rapide</span>
+    <span class="acc">· HTML</span><span>CSS</span><span>JavaScript</span><span class="acc">· Python</span><span>PHP</span><span>SQL</span><span class="acc">· Sites vitrine</span><span>Scripts Python</span><span>Apps web</span><span class="acc">· Bugs réglés</span><span>Code sur-mesure</span><span>Livraison rapide</span>
+  </div>
+</div>
+
+<section id="about">
+  <p class="lbl">Qui suis-je</p>
+  <div class="about-grid">
+    <div class="about-avatar">JD</div>
+    <div class="about-text">
+      <h2>Développeur passionné,<br><span class="it">pas juste codeur.</span></h2>
+      <p>Je suis Jérémy, étudiant en informatique spécialisé en développement web. Je construis des sites, scripts et applications qui fonctionnent vraiment — du code propre, pensé pour durer.</p>
+      <p>Contrairement aux freelances qui utilisent des builders comme Elementor ou Wix, je code tout à la main. Résultat : des sites plus rapides, plus uniques, et sans licences à renouveler chaque année.</p>
+      <div class="stats">
+        <div class="stat reveal"><div class="stat-n">24h</div><div class="stat-l">Réponse garantie</div></div>
+        <div class="stat reveal"><div class="stat-n">100%</div><div class="stat-l">Code sur-mesure</div></div>
+        <div class="stat reveal"><div class="stat-n">4+</div><div class="stat-l">Services proposés</div></div>
+        <div class="stat reveal"><div class="stat-n">3j</div><div class="stat-l">Livraison minimum</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="services">
+  <p class="lbl">Ce que je fais</p>
+  <h2>Services</h2>
+  <div class="slist">
+    <a href="#contact" class="srow reveal">
+      <div class="sleft"><span class="snum">01</span><div><div class="sname">Site vitrine sur-mesure</div><div class="sdesc">HTML · CSS · JavaScript · 100% codé à la main</div></div></div>
+      <div class="sright"><span class="sprice">À partir de 79€</span><div class="sarr">↗</div></div>
+    </a>
+    <a href="#contact" class="srow reveal">
+      <div class="sleft"><span class="snum">02</span><div><div class="sname">Script Python & automatisation</div><div class="sdesc">Scraping · API · Traitement de données · Bots</div></div></div>
+      <div class="sright"><span class="sprice">À partir de 39€</span><div class="sarr">↗</div></div>
+    </a>
+    <a href="#contact" class="srow reveal">
+      <div class="sleft"><span class="snum">03</span><div><div class="sname">Correction de bugs</div><div class="sdesc">HTML · CSS · JS · Python · PHP · SQL</div></div></div>
+      <div class="sright"><span class="sprice">À partir de 19€</span><div class="sarr">↗</div></div>
+    </a>
+    <a href="#contact" class="srow reveal">
+      <div class="sleft"><span class="snum">04</span><div><div class="sname">Application web</div><div class="sdesc">Dashboard · Espace membre · Outil métier · Mini SaaS</div></div></div>
+      <div class="sright"><span class="sprice">À partir de 149€</span><div class="sarr">↗</div></div>
+    </a>
+  </div>
+</section>
+
+<section id="tarifs">
+  <p class="lbl">Transparence</p>
+  <h2>Tarifs clairs,<br><span class="it">sans surprise.</span></h2>
+  <div class="tgrid">
+    <div class="tcard reveal">
+      <div class="tsvc">Site vitrine</div>
+      <div class="tname">One Page</div>
+      <div class="tprice">79€</div>
+      <div class="tdelay">⏱ Livraison 3 jours max</div>
+      <ul class="tfeats"><li>1 page · 5 sections</li><li>Design responsive mobile</li><li>Formulaire de contact</li><li>SEO de base</li><li>Hébergement conseillé</li></ul>
+    </div>
+    <div class="tcard feat reveal">
+      <div class="tbadge">⭐ Le plus populaire</div>
+      <div class="tsvc">Site vitrine</div>
+      <div class="tname">Vitrine Classique</div>
+      <div class="tprice">199€</div>
+      <div class="tdelay">⏱ Livraison 6 jours max</div>
+      <ul class="tfeats"><li>3 à 5 pages complètes</li><li>Design sur-mesure</li><li>Animations au scroll</li><li>Formulaire de contact</li><li>SEO de base inclus</li><li>2 retouches incluses</li></ul>
+    </div>
+    <div class="tcard reveal">
+      <div class="tsvc">Site vitrine</div>
+      <div class="tname">Vitrine Premium</div>
+      <div class="tprice">349€</div>
+      <div class="tdelay">⏱ Livraison 10 jours max</div>
+      <ul class="tfeats"><li>5+ pages</li><li>Animations avancées</li><li>SEO complet</li><li>Performances optimisées</li><li>3 retouches incluses</li></ul>
+    </div>
+    <div class="tcard reveal">
+      <div class="tsvc">Python</div>
+      <div class="tname">Script Simple</div>
+      <div class="tprice">39€</div>
+      <div class="tdelay">⏱ Livraison 2 jours max</div>
+      <ul class="tfeats"><li>1 tâche automatisée</li><li>Code commenté</li><li>Guide d'utilisation</li></ul>
+    </div>
+    <div class="tcard reveal">
+      <div class="tsvc">Python</div>
+      <div class="tname">Script Avancé</div>
+      <div class="tprice">99€</div>
+      <div class="tdelay">⏱ Livraison 5 jours max</div>
+      <ul class="tfeats"><li>Scraping · API · Données</li><li>Code commenté</li><li>Guide complet</li><li>2 ajustements inclus</li></ul>
+    </div>
+    <div class="tcard reveal">
+      <div class="tsvc">Bugs & Dev</div>
+      <div class="tname">Correction de bugs</div>
+      <div class="tprice">19€<small> / bug simple</small></div>
+      <div class="tdelay">⏱ 24h à 3 jours</div>
+      <ul class="tfeats"><li>Bug simple dès 19€</li><li>Bug complexe dès 49€</li><li>HTML · CSS · JS · Python · PHP</li><li>Explication fournie</li></ul>
+    </div>
+  </div>
+</section>
+
+<section id="projets">
+  <p class="lbl">Réalisations</p>
+  <h2>Projets récents</h2>
+  <div class="pgrid">
+    <div class="pcard reveal">
+      <div class="pthumb pt-o"><div class="pthumb-pat"></div>🍽️</div>
+      <div class="pbody">
+        <div class="pname">Site Restaurant</div>
+        <div class="pdesc">Site vitrine moderne pour un restaurant local — menu, galerie photos et design 100% responsive.</div>
+        <div class="ptags"><span class="tag">HTML/CSS</span><span class="tag">JavaScript</span><span class="tag">Responsive</span></div>
+        <div class="wip">⏳ En cours</div>
+      </div>
+    </div>
+    <div class="pcard reveal">
+      <div class="pthumb pt-b"><div class="pthumb-pat"></div>📚</div>
+      <div class="pbody">
+        <div class="pname">StudyAI</div>
+        <div class="pdesc">App SaaS générant des fiches de révision et QCM automatiquement depuis des cours via l'API Claude.</div>
+        <div class="ptags"><span class="tag">PHP</span><span class="tag">API Claude</span><span class="tag">MySQL</span></div>
+        <div class="priv">🔒 Projet privé</div>
+      </div>
+    </div>
+    <div class="pcard reveal">
+      <div class="pthumb pt-g"><div class="pthumb-pat"></div>🤖</div>
+      <div class="pbody">
+        <div class="pname">Script automatisation Python</div>
+        <div class="pdesc">Script de scraping et traitement de données automatisé pour un client e-commerce.</div>
+        <div class="ptags"><span class="tag">Python</span><span class="tag">Scraping</span><span class="tag">Automation</span></div>
+        <div class="priv">🔒 Projet privé</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="stack">
+  <p class="lbl">Technologies</p>
+  <h2>Ma stack</h2>
+  <div class="sgrid">
+    <div class="si reveal"><span>🐍</span>Python</div>
+    <div class="si reveal"><span>🌐</span>HTML5</div>
+    <div class="si reveal"><span>🎨</span>CSS3</div>
+    <div class="si reveal"><span>⚡</span>JavaScript</div>
+    <div class="si reveal"><span>🐘</span>PHP</div>
+    <div class="si reveal"><span>🗄️</span>MySQL</div>
+    <div class="si reveal"><span>🐙</span>Git</div>
+    <div class="si reveal"><span>🐧</span>Linux</div>
+  </div>
+</section>
+
+<section id="contact">
+  <p class="lbl">Parlons-en</p>
+  <h2 class="chl">Un projet<br><em>en tête ?</em></h2>
+  <form action="https://formspree.io/f/xjgppoyg" method="POST" class="cform" id="cform">
+    <div class="frow">
+      <div class="fg"><label>Votre nom</label><input type="text" name="name" placeholder="Jean Dupont" required/></div>
+      <div class="fg"><label>Votre email</label><input type="email" name="email" placeholder="jean@email.com" required/></div>
+    </div>
+    <div class="fg">
+      <label>Service souhaité</label>
+      <select name="service">
+        <option value="">Quel service vous intéresse ?</option>
+        <option>Site vitrine One Page — 79€</option>
+        <option>Site vitrine Classique — 199€</option>
+        <option>Site vitrine Premium — 349€</option>
+        <option>Script Python simple — 39€</option>
+        <option>Script Python avancé — 99€</option>
+        <option>Correction de bugs — dès 19€</option>
+        <option>Application web — dès 149€</option>
+        <option>Autre / Je ne sais pas encore</option>
+      </select>
+    </div>
+    <div class="fg"><label>Votre message</label><textarea name="message" rows="5" placeholder="Décrivez votre projet en quelques lignes..." required></textarea></div>
+    <div class="fbot">
+      <p class="rt">⚡ Réponse sous 24h garantie</p>
+      <button type="submit" class="btn btn-p" id="sbtn">Envoyer →</button>
+    </div>
+    <div class="fok" id="fok">✅ Message envoyé ! Je vous réponds sous 24h.</div>
+  </form>
+</section>
+
+<footer>
+  <span>© 2026 Jérémy — Développeur Freelance</span>
+  <a href="https://github.com/jddevx" target="_blank">github.com/jddevx</a>
+</footer>
+
+<script>
+  const cur = document.getElementById('cur');
+  const ring = document.getElementById('ring');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+  (function anim(){ rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12; cur.style.left=mx+'px'; cur.style.top=my+'px'; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(anim); })();
+  document.querySelectorAll('a,button,.si,.tcard').forEach(el => {
+    el.addEventListener('mouseenter',()=>ring.classList.add('big'));
+    el.addEventListener('mouseleave',()=>ring.classList.remove('big'));
+  });
+
+  const obs = new IntersectionObserver((es)=>{ es.forEach((e,i)=>{ if(e.isIntersecting) setTimeout(()=>e.target.classList.add('visible'),i*80); }); },{threshold:0.1});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+  const secs=document.querySelectorAll('section[id]');
+  const navAs=document.querySelectorAll('.nav-links a:not(.nav-cta)');
+  window.addEventListener('scroll',()=>{ let a=''; secs.forEach(s=>{if(window.scrollY>=s.offsetTop-120)a=s.id;}); navAs.forEach(l=>{l.style.color=l.getAttribute('href')==='#'+a?'var(--ink)':'';});});
+
+  const form=document.getElementById('cform');
+  const sbtn=document.getElementById('sbtn');
+  const fok=document.getElementById('fok');
+  form.addEventListener('submit',async e=>{
+    e.preventDefault(); sbtn.textContent='Envoi...'; sbtn.disabled=true;
+    try {
+      const r=await fetch(form.action,{method:'POST',body:new FormData(form),headers:{Accept:'application/json'}});
+      if(r.ok){form.reset();fok.style.display='block';sbtn.textContent='Envoyé ✓';}
+      else{sbtn.textContent='Erreur — réessayez';sbtn.disabled=false;}
+    } catch{sbtn.textContent='Erreur — réessayez';sbtn.disabled=false;}
+  });
+</script>
+</body>
+</html>
